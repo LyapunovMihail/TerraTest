@@ -1,0 +1,42 @@
+<div class="container">
+
+  <div class="row justify-content-center valign-middle" *ngIf="view.currentView == 'authorization'">
+    <div class="col-12 col-md-5">
+      <form (ngSubmit)="authorize({username: username, password: password});
+      username.value = ''; password.value = ''" #authForm="ngForm">
+        <div class="form-group">
+          <label for="username">Логин</label>
+          <input type="text" class="form-control is-invalid" [class.is-invalid]="username.invalid && username.touched" id="username" name="username" placeholder="Введите логин" ngModel #username="ngModel" required>
+          <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
+            Пожалуйста, введите логин.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <input type="password" class="form-control is-invalid" [class.is-invalid]="password.invalid && password.touched" id="password" name="password" placeholder="Введите пароль" ngModel #password="ngModel" required>
+          <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
+            Пожалуйста, введите пароль.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="authForm.invalid">Войти</button>
+        <div class="alert alert-danger margin-top-30" role="alert" *ngIf="authorization.error">
+          Ошибка {{authorization.error.status}}. Ошибка авторизации
+        </div>
+      </form>
+    </div>
+  </div>    
+
+  <div class="row justify-content-center valign-middle" *ngIf="view.currentView == 'gettingPrivateValue'">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-5" >
+      <button type="button" class="btn btn-success" (click)="getPrivateValue({access_token: authorization.response.access_token})">Получить приватное значение</button>
+      <button type="button" class="btn btn-light" (click)="backToView('authorization')">Назад</button>
+      <div class="alert alert-danger margin-top-30" role="alert" *ngIf="gettingPrivateValue.error">
+          Ошибка {{gettingPrivateValue.error.status}}
+      </div>
+    </div>
+    <div class="col-lg-8 margin-top-30">
+      <h1 *ngIf="gettingPrivateValue.response">{{gettingPrivateValue.response}}</h1>
+    </div>
+  </div>
+  
+</div>
