@@ -204,7 +204,6 @@ var AppService = (function () {
         return $.ajax(settings);
     };
     AppService.prototype.getPrivateValue = function (data) {
-        console.log("data: ", data);
         var settings = {
             "async": true,
             "crossDomain": true,

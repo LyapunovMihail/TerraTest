@@ -6,7 +6,6 @@ export class AppService {
 
   constructor() { }
   
-
   authorize(authData) {
   	var settings = {
 		  "async": true,
@@ -23,12 +22,10 @@ export class AppService {
 		   	"password": `${authData.password}`
 		  }
 		}
-
   	return $.ajax(settings)
   }
 
   getPrivateValue(data) {
-  	console.log("data: ", data)
   	var settings = {
 		  "async": true,
 		  "crossDomain": true,
@@ -38,7 +35,6 @@ export class AppService {
 		    "authorization": `Bearer ${data.access_token}`
 		  }
 		}
-
 		return $.ajax(settings)
   }
 

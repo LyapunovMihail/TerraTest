@@ -29,7 +29,6 @@ export class AppComponent {
 
   authorize(authData) {
   	let self = this;
-
     this.appService
     	.authorize(authData)
     	.done(function (response) {
@@ -44,7 +43,6 @@ export class AppComponent {
   
   getPrivateValue(data) {
   	let self = this;
-
   	this.appService
     	.getPrivateValue(data)
     	.done(function (response) {
