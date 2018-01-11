@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AppService } from './app.service';
+declare var Cookies:any;
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,7 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit{
 
   constructor(
     private appService: AppService) { 
@@ -15,50 +16,80 @@ export class AppComponent {
 
   authorization = {
   	response: null,
-  	error: null
+  	error: {}
   }
 
-  gettingPrivateValue = {
+  receivingPrivateValue = {
   	response: null,
-  	error: null
+  	error: {}
   }
 
   view = {
   	currentView: "authorization"
   } 
 
-  authorize(authData) {
-  	let self = this;
-    this.appService
-    	.authorize(authData)
-    	.done(function (response) {
-			  self.authorization.response = response;
-			  self.view.currentView = 'gettingPrivateValue';
-			})
-			.fail(function(error) {
-				console.log("Request failed: " + JSON.stringify(error));
-				self.authorization.error = error;
-			});
+  ngOnInit() {
+    var authData = this.getStoredAuthData();
+    if (authData.username && authData.password) 
+      this.authorize(authData);
   }
-  
+
+  storeAuthData(authData) {
+    Cookies.set("username", authData.username);
+    Cookies.set("password", authData.password);
+  }
+
+  getStoredAuthData() {
+    var username = Cookies.get("username");
+    var password = Cookies.get("password");
+    return {username: username, password: password};
+  }
+
+  checkAuthData(authData) {
+    var error = {username: '', password: ''};
+    if (authData.username !== 'test') error.username = 'Неверный логин';
+    if (authData.password !== 'test') error.password = 'Неверный пароль';
+    this.authorization.error = error;
+    if (!error.username && !error.password) {
+      this.storeAuthData(authData);
+      this.authorize(authData);
+    }
+  }
+
+  authorize(authData) {
+    let self = this;
+    this.appService
+      .authorize(authData)
+      .done((response) => {
+        self.authorization.response = response;
+        self.view.currentView = 'receivingPrivateValue';
+        setInterval(() => {
+          self.appService.refreshAuthorize(self.authorization.response)
+          .done((newResponse) => {
+            self.authorization.response = newResponse;
+          })
+          .fail((error) => {
+            console.log("Request failed: " + JSON.stringify(error));
+            self.authorization.error = error;
+          });
+        }, self.authorization.response.expires_in * 1000);
+      })
+      .fail((error) => {
+        console.log("Request failed: " + JSON.stringify(error));
+        self.authorization.error = error;
+      });
+  }
+
   getPrivateValue(data) {
   	let self = this;
   	this.appService
     	.getPrivateValue(data)
-    	.done(function (response) {
-			  self.gettingPrivateValue.response = response;
-			})
-			.fail(function(error) {
-				console.log("Request failed: " + JSON.stringify(error));
-				self.gettingPrivateValue.error = error;
-			});
+    	.subscribe((response) => {
+			  self.receivingPrivateValue.response = response;
+			}, (error) => {
+        console.log("Request failed: " + JSON.stringify(error));
+        self.receivingPrivateValue.error = error;
+      });
   }
-
-  backToView(view) {
-  	this.view.currentView = view;
-  	this.authorization.response = null;
-  	this.authorization.error = null;
-  	this.gettingPrivateValue.response = null;
-  	this.gettingPrivateValue.error = null;
-  }
+  
 }
