@@ -57,26 +57,26 @@ export class AppComponent implements OnInit{
   }
 
   authorize(authData) {
+    console.log("authData: ", authData)
+    let self = this;
     this.appService
       .authorize(authData)
-      .done((response) => {
-        this.authorization.response = response;
-        this.view.currentView = 'receivingPrivateValue';
-        setInterval(() => {
-          this.appService.refreshAuthorize(this.authorization.response)
-          .done((newResponse) => {
-            this.authorization.response = newResponse;
+      .subscribe(function (response) {
+        console.log("response: ", response);
+        self.authorization.response = response;
+        self.view.currentView = 'gettingPrivateValue';
+        setInterval(function () {
+          self.appService.refreshAuthorize(self.authorization.response)
+          .done(function (newResponse) {
+            console.log("newResponse: ", newResponse);
+            self.authorization.response = newResponse;
           })
-          .fail((error) => {
-            console.log("Request failed: " + JSON.stringify(error));
-            this.authorization.error = error;
-          });
-        }, this.authorization.response.expires_in * 1000);
-      })
-      .fail((error) => {
+        }, 10000);
+      }, function (error) {
         console.log("Request failed: " + JSON.stringify(error));
-        this.authorization.error = error;
+        self.authorization.error = error;
       });
+
   }
 
   getPrivateValue(data) {

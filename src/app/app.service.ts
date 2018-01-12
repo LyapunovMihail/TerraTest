@@ -7,7 +7,7 @@ export class AppService {
 
   constructor(private http: HttpClient) { }
   
-  authorize(authData) {
+  authorize1(authData) {
   	var settings = {
 		  "async": true,
 		  "crossDomain": true,
@@ -23,6 +23,17 @@ export class AppService {
 		  }
 		}
   	return $.ajax(settings)
+  }
+
+  authorize(authData) {
+  	var myHeaders = new HttpHeaders({
+  		"Authorization": `Basic dGVzdDp0ZXN0`,
+  		"Content-type": "application/x-www-form-urlencoded",
+  		"Accept": "application/json, text/plain, */*"
+  	});
+
+  	var body = {"grant_type":"password"}
+  	return this.http.post("https://ta-test.ipname.xyz/api/token", body,{headers:myHeaders});
   }
 
   refreshAuthorize(authData) {
