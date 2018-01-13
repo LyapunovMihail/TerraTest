@@ -2,31 +2,25 @@
 
   <div class="row justify-content-center valign-middle" *ngIf="view.currentView == 'authorization'">
     <div class="col-12 col-md-5">
-      <form (ngSubmit)="checkAuthData({username: username.value, password: password.value});
+      <form (ngSubmit)="processingAuthData({username: username.value, password: password.value});
       username.value = ''; password.value = ''" #authForm="ngForm">
         <div class="form-group">
           <label for="username">Логин</label>
-          <input type="text" class="form-control is-invalid" (input)="authorization.error.username = ''" [class.is-invalid]="(username.invalid && username.touched) || authorization.error.username" id="username" name="username" placeholder="Введите логин" ngModel #username="ngModel" required>
+          <input type="text" class="form-control is-invalid" [class.is-invalid]="username.invalid && username.touched" id="username" name="username" placeholder="Введите логин" ngModel #username="ngModel" required>
           <div class="invalid-feedback" *ngIf="username.invalid && username.touched">
             Пожалуйста, введите логин.
-          </div>
-          <div class="invalid-feedback" *ngIf="authorization.error.username">
-            {{authorization.error.username}}
           </div>
         </div>
         <div class="form-group">
           <label for="password">Пароль</label>
-          <input type="password" class="form-control is-invalid" (input)="authorization.error.password = ''" [class.is-invalid]="(password.invalid && password.touched) || authorization.error.password" id="password" name="password" placeholder="Введите пароль" ngModel #password="ngModel" required>
+          <input type="password" class="form-control is-invalid" [class.is-invalid]="password.invalid && password.touched" id="password" name="password" placeholder="Введите пароль" ngModel #password="ngModel" required>
           <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
             Пожалуйста, введите пароль.
-          </div>
-          <div class="invalid-feedback" *ngIf="authorization.error.password">
-            {{authorization.error.password}}
           </div>
         </div>
         <button type="submit" class="btn btn-primary" [disabled]="authForm.invalid">Войти</button>
         <div class="alert alert-danger margin-top-30" role="alert" *ngIf="authorization.error.statusText">
-          Ошибка {{authorization.error.status}}. Ошибка авторизации
+          Ошибка авторизации. Неверный логин или пароль.
         </div>
       </form>
     </div>

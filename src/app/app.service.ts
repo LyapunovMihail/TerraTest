@@ -1,56 +1,28 @@
 import { Injectable } from '@angular/core';
-declare var $:any;
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable()
 export class AppService {
 
   constructor(private http: HttpClient) { }
-  
-  authorize1(authData) {
-  	var settings = {
-		  "async": true,
-		  "crossDomain": true,
-		  "url": "https://ta-test.ipname.xyz/api/token",
-		  "method": "POST",
-		  "headers": {
-		    "Authorization": `Basic dGVzdDp0ZXN0`,
-		    "Content-type": "application/x-www-form-urlencoded",
-		    "Accept": "application/json, text/plain, */*"
-		  },
-		  "data": {
-		    "grant_type": "password"
-		  }
-		}
-  	return $.ajax(settings)
-  }
 
   authorize(authData) {
   	var myHeaders = new HttpHeaders({
-  		"Authorization": `Basic dGVzdDp0ZXN0`,
+  		"Authorization": `Basic ${authData}`,
   		"Content-type": "application/x-www-form-urlencoded",
   		"Accept": "application/json, text/plain, */*"
   	});
-
-  	var body = {"grant_type":"password"}
+  	var body = "grant_type=password";
   	return this.http.post("https://ta-test.ipname.xyz/api/token", body,{headers:myHeaders});
   }
 
-  refreshAuthorize(authData) {
-  	var settings = {
-		  "async": true,
-		  "crossDomain": true,
-		  "url": "https://ta-test.ipname.xyz/api/token",
-		  "method": "POST",
-		  "headers": {
-		    "authorization": `Bearer ${authData.refresh_token}`,
-		    "content-type": "application/x-www-form-urlencoded"
-		  },
-		  "data": {
-		    "grant_type": "refresh_token"
-		  }
-		}
-  	return $.ajax(settings)
+  refreshAuthorize(data) {
+  	var myHeaders = new HttpHeaders({
+  		"Authorization": `Bearer ${data.refresh_token}`,
+  		"Content-type": "application/x-www-form-urlencoded"
+  	});
+  	var body = "grant_type=refresh_token";
+  	return this.http.post("https://ta-test.ipname.xyz/api/token", body,{headers:myHeaders});
   }
 
   getPrivateValue(data) {
