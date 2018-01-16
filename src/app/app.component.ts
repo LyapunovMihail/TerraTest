@@ -32,7 +32,7 @@ export class AppComponent implements OnInit{
   } 
 
   ngOnInit() {
-    var authData = this.getStoredAuthData();
+    let authData = this.getStoredAuthData();
     if (authData) this.authorize(authData);
   }
 
@@ -87,7 +87,7 @@ export class AppComponent implements OnInit{
   }
 
   getStoredAuthData() {
-    var authData = Cookies.get("authData");
+    let authData = Cookies.get("authData");
     return authData;
   }
 
